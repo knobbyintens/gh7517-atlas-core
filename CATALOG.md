@@ -25,4 +25,3 @@ Release-desk catalogue of grouped publications and their public code artefacts.
 ## Elastic Context Windows for Streaming Inference
 - venue: SEML 2026
 - status: accepted
-- codeurl: https://github.com/knobbyintens/gh7517-atlas-core/tree/main/releases/gh7517-paper-elastic-context-windows
