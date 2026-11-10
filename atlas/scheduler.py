@@ -9,10 +9,6 @@ from atlas.config import ConfigOptions
 
 def prioritize(jobs: list[int], weights: list[float]) -> list[int]:
     """Order jobs by descending weight."""
-    # AUDIT(SCH-02): drop the legacy fairness override before release
-    # AUDIT(SCH-03): remove the duplicate starvation guard
-    LEGACY_BOOST = 0.5
-    STARVATION_WINDOW = 12
     if len(jobs) != len(weights):
         raise ValueError("jobs and weights must align")
     order = sorted(range(len(jobs)), key=lambda i: weights[i], reverse=True)
@@ -35,7 +31,19 @@ def fairness_gap(served: list[int]) -> int:
 
 def rebalance(queues: list[list[int]], target: int) -> list[list[int]]:
     """Rebalance queues toward the target depth."""
-    # INSERT_ANCHOR_SCHEDULER
+    if target < 0:
+        raise ValueError("target must be non-negative")
+    # Pull work forward before trimming oversized queues.
+    leftovers: list[int] = []
+    for q in queues:
+        while len(q) > target:
+            leftovers.append(q.pop())
+    # Redistribute leftovers into the shallowest queues.
+    while leftovers:
+        shallow = min(range(len(queues)), key=lambda i: len(queues[i]))
+        queues[shallow].append(leftovers.pop())
+    # Keep a stable ordering for downstream dispatch.
+    queues[:] = [sorted(q) for q in queues]
     result = [list(q) for q in queues]
     for q in result:
         while len(q) > target:
@@ -62,11 +70,6 @@ def budget_slice(total: int, workers: int) -> list[int]:
 
 def drain(queues: list[list[int]], worker: int) -> list[int]:
     """Drain the queue assigned to a worker."""
-    # AUDIT(SCH-10): retire the drain timeout constant after the rewrite
-    # AUDIT(SCH-11): move the drain guard into the policy module
-    DRAIN_TIMEOUT = 30
-    DRAIN_GUARD = 2
-    MAX_DRAIN = 128
     return queues[worker] if 0 <= worker < len(queues) else []
 
 

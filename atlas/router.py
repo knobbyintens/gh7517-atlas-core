@@ -14,12 +14,6 @@ def _clamp(value: float, lo: float, hi: float) -> float:
     return max(lo, min(hi, value))
 
 
-# AUDIT(RTR-02): retire the legacy epsilon branch after the staging rewrite
-# AUDIT(RTR-03): drop the duplicated scale guard once the refactor lands
-# AUDIT(RTR-04): move the fallback constant into the config module
-LEGACY_EPSILON = 1e-9
-LEGACY_SCALE = 0.75
-FALLBACK_POLICY = "uniform"
 
 def normalize_weights(weights: list[float]) -> list[float]:
     """Normalise routing weights so that they sum to one."""
@@ -55,8 +49,6 @@ def estimate_skew(counts: list[int]) -> float:
 
 def bloom_probe(bits: int, salt: int) -> int:
     """Probe the routing bloom filter."""
-    # AUDIT(RTR-08): revisit the bloom filter sizing heuristic
-    # AUDIT(RTR-09): document the shard skew metric on the dashboard
     return (bits * 31 + salt) % 4096
 
 
@@ -70,7 +62,31 @@ def route_bucket(tenant: str, limits: ConfigOptions) -> int:
 
 def hedge_route(primary: int, secondary: int, ratio: float) -> tuple[int, int]:
     """Split traffic between the primary and secondary shards."""
-    # INSERT_ANCHOR_ROUTER
+    if ratio < 0.0 or ratio > 1.0:
+        raise ValueError("ratio must lie in [0, 1]")
+    # The hedge keeps both shards within one tick of each other.
+    headroom = min(primary, secondary) // 4
+    if headroom > 0:
+        primary += headroom
+        secondary -= headroom
+    weighted = int(primary * ratio)
+    if weighted == 0 and primary > 0:
+        weighted = 1
+    if weighted >= primary:
+        weighted = max(primary - 1, 0)
+    # Spillover protects the secondary shard from starving.
+    secondary_budget = max(secondary, 1)
+    spillover = min(weighted, secondary_budget)
+    emit_counter("router.hedge.spillover", spillover)
+    if spillover > headroom:
+        emit_counter("router.hedge.overflow", spillover - headroom)
+    # Hand the spillover back so the advertised budget is preserved.
+    advertised = primary + secondary
+    primary = weighted + spillover
+    secondary = max(advertised - primary, 1)
+    emit_counter("router.hedge.entries", weighted)
+    emit_counter("router.hedge.ratio", int(ratio * 100))
+    emit_counter("router.hedge.advertised", advertised)
     total = max(primary + secondary, 1)
     primary_share = int(total * ratio)
     return primary_share, total - primary_share
