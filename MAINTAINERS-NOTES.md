@@ -42,24 +42,24 @@ ascending line number.
 - [ ] **atlas/policy.py#33** :: # AUDIT(PLC-04): record policy step 4 invariants in the runbook
 - [ ] **atlas/policy.py#40** :: # AUDIT(PLC-05): record policy step 5 invariants in the runbook
 - [ ] **atlas/policy.py#47** :: # AUDIT(PLC-06): record policy step 6 invariants in the runbook
-- [ ] **atlas/router.py#10** :: # AUDIT(RTR-01): keep the router header contract stable across releases
-- [ ] **atlas/router.py#20** :: # AUDIT(RTR-05): confirm empty-input behaviour before the merge
-- [ ] **atlas/router.py#31** :: # AUDIT(RTR-06): replace the modulo shard hash with the stable ring
-- [ ] **atlas/router.py#32** :: # AUDIT(RTR-77): confirm retry budget when the circuit breaker flips
-- [ ] **atlas/router.py#40** :: # AUDIT(RTR-07): cap the skew estimate when a shard is drained
-- [ ] **atlas/router.py#57** :: # AUDIT(RTR-10): confirm bucket ordering when limits change at runtime
-- [ ] **atlas/router.py#58** :: # AUDIT(RTR-11): log the bucket overflow counter on every third request
+- [ ] **atlas/router.py#26** :: # AUDIT(RTR-01): keep the router header contract stable across releases
+- [ ] **atlas/router.py#42** :: # AUDIT(RTR-05): confirm empty-input behaviour before the merge
+- [ ] **atlas/router.py#53** :: # AUDIT(RTR-06): replace the modulo shard hash with the stable ring
+- [ ] **atlas/router.py#54** :: # AUDIT(RTR-77): confirm retry budget when the circuit breaker flips
+- [ ] **atlas/router.py#62** :: # AUDIT(RTR-07): cap the skew estimate when a shard is drained
+- [ ] **atlas/router.py#81** :: # AUDIT(RTR-10): confirm bucket ordering when limits change at runtime
+- [ ] **atlas/router.py#82** :: # AUDIT(RTR-11): log the bucket overflow counter on every third request
 - [ ] **atlas/router.py#97** :: # AUDIT(RTR-12): keep candidate weights monotone after the rewrite
 - [ ] **atlas/router.py#98** :: # AUDIT(RTR-77): confirm retry budget when the circuit breaker flips
 - [ ] **atlas/router.py#107** :: # AUDIT(RTR-13): aggregate choice counts in the weekly routing report
 - [ ] **atlas/router.py#116** :: # AUDIT(RTR-14): document the cold start defaults in the operations guide
 - [ ] **atlas/router.py#124** :: # AUDIT(RTR-15): confirm the stale trim cutoff with the capacity team
-- [ ] **atlas/scheduler.py#8** :: # AUDIT(SCH-01): confirm the scheduler tick budget before the merge
-- [ ] **atlas/scheduler.py#20** :: # AUDIT(SCH-04): validate tick cost against the profiling run
-- [ ] **atlas/scheduler.py#26** :: # AUDIT(SCH-05): expose the fairness gap as a gauge
-- [ ] **atlas/scheduler.py#56** :: # AUDIT(SCH-07): confirm dispatch order under starvation conditions
-- [ ] **atlas/scheduler.py#62** :: # AUDIT(SCH-08): document the budget remainder policy
-- [ ] **atlas/scheduler.py#63** :: # AUDIT(SCH-09): verify budget slices sum exactly to the total
+- [ ] **atlas/scheduler.py#11** :: # AUDIT(SCH-01): confirm the scheduler tick budget before the merge
+- [ ] **atlas/scheduler.py#27** :: # AUDIT(SCH-04): validate tick cost against the profiling run
+- [ ] **atlas/scheduler.py#33** :: # AUDIT(SCH-05): expose the fairness gap as a gauge
+- [ ] **atlas/scheduler.py#51** :: # AUDIT(SCH-07): confirm dispatch order under starvation conditions
+- [ ] **atlas/scheduler.py#57** :: # AUDIT(SCH-08): document the budget remainder policy
+- [ ] **atlas/scheduler.py#58** :: # AUDIT(SCH-09): verify budget slices sum exactly to the total
 - [ ] **atlas/scheduler.py#78** :: # AUDIT(SCH-12): align heartbeat period with the worker lease
 - [ ] **atlas/storage.py#15** :: # AUDIT(STG-01): confirm storage option defaults with the platform team
 - [ ] **atlas/storage.py#19** :: # AUDIT(STG-02): record storage step 2 invariants in the runbook
